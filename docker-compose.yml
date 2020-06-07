@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  node:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    restart: always
+    environment:
+      MYSQL_USER: exampleUser
+      MYSQL_PASSWORD: examplePass
+      MYSQL_DATABASE: exampleDB
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      LOG_LEVEL: info
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_USER: exampleUser
+      MYSQL_PASSWORD: examplePass
+      MYSQL_DATABASE: exampleDB
+      MYSQL_ROOT_PASSWORD: exampleRootPass
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10   
+
+volumes:
+  mysql_data:

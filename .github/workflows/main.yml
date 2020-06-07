@@ -1,0 +1,105 @@
+name: Lotto API workflow
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      MYSQL_USER: ${{ secrets.MYSQL_TEST_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_TEST_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_TEST_DATABASE }}
+      MYSQL_HOST: 127.0.0.1
+
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_USER: ${{ secrets.MYSQL_TEST_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_TEST_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_TEST_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_TEST_ROOT_PASSWORD }}
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install development dependencies
+        run: npm install
+      - name: StandardJS lint checks
+        uses: goto-bus-stop/standard-action@v1.0.3
+        with:
+          annotate: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run migrations in testing environment
+        run: npm run migrate
+      - name: Run tests
+        run: npm run test
+      - name: Report and annotate tests
+        uses: IgnusG/jest-report-action@v2.3.2
+        if: always()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage results as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: lotto-api-${{ github.run_number }}-code-coverage
+          path: coverage
+      
+    
+  build:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Login to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Build the tagged Docker image
+        run: docker build . --file Dockerfile --tag membrive/lotto-api:${{ github.run_number }}
+      - name: Push the tagged Docker image to Docker Hub
+        run: docker push membrive/lotto-api:${{ github.run_number }}
+      - name: Build the latest Docker image
+        run: docker build . --file Dockerfile --tag membrive/lotto-api:latest
+      - name: Push the latest Docker image to Docker Hub
+        run: docker push membrive/lotto-api:latest
+      - name: Export Docker image
+        run: docker save membrive/lotto-api:${{ github.run_number }} > lotto-api-${{ github.run_number }}-docker.tar
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lotto-api-${{ github.run_number }}-docker.tar
+          path: lotto-api-${{ github.run_number }}-docker.tar
+
+  deploy:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: lotto-api-${{ github.run_number }}-docker.tar
+      - name: Load Docker image
+        run: docker load < lotto-api-${{ github.run_number }}-docker.tar
+      - name: Tag image for Heroku registry
+        run: docker tag membrive/lotto-api:${{ github.run_number }} registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+      - name: Push image to Heroku Registry
+        run: docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
+      - name: Run migrations on Heroku environment
+        run: heroku run --no-notify -a ${{ secrets.HEROKU_APP_NAME }} npm run migrate
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}

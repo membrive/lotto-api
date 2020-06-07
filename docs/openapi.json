@@ -1,0 +1,180 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Lotto API",
+    "description": "Lotto API documentation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "players",
+      "description": "People playing the lottery"
+    },
+    {
+      "name": "transactions",
+      "description": "Operations performed by players"
+    }
+  ],
+  "paths": {
+    "/players": {
+      "post": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Create a new player",
+        "operationId": "createPlayer",
+        "requestBody": {
+          "description": "Player object that needs to be added to the API",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Player has been created",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          },
+          "500": {
+            "description": "Sever error",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "post": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Create a new transaction",
+        "operationId": "createTransaction",
+        "requestBody": {
+          "description": "Transaction object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Transaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transaction has been created",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request, or some Id property does not exist",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Get transactions. One of the marketId or playerId query string is required",
+        "operationId": "getTransactions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "marketId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Numeric ID of the market to get transactions"
+          },
+          {
+            "in": "query",
+            "name": "playerId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Numeric ID of the player to get transactions"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request, marketId (int) OR playerId (int) are required",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Player": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "Germany",
+              "United Kingdom",
+              "Australia"
+            ]
+          },
+          "balance": {
+            "type": "integer"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "playerId": {
+            "type": "integer"
+          },
+          "lottery": {
+            "type": "string",
+            "enum": [
+              "EuroMillions",
+              "PowerBall",
+              "EuroJackpot",
+              "MegaMillions",
+              "MINILotto"
+            ]
+          },
+          "amount": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

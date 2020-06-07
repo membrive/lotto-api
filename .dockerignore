@@ -1,0 +1,7 @@
+.env
+coverage
+docker-compose.*
+docs
+junit.xml
+node_modules
+npm-debug.log

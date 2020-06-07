@@ -1,0 +1,55 @@
+{
+  "name": "lotto-api",
+  "version": "1.0.0",
+  "description": "Lotto RESTful API",
+  "main": "server.js",
+  "scripts": {
+    "migrate": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate",
+    "migrate:undo": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate:undo:all",
+    "test": "NODE_ENV=docker LOG_LEVEL=fatal jest --ci --reporters=default --reporters=jest-junit --coverage --forceExit",
+    "standard": "standard",
+    "standard-fix": "standard --fix",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/membrive/lotto-api.git"
+  },
+  "keywords": [
+    "lotto"
+  ],
+  "author": "Fernando Membrive Guillen",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/membrive/lotto-api/issues"
+  },
+  "homepage": "https://github.com/membrive/lotto-api#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bunyan": "^1.8.12",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.1.0",
+    "sequelize": "^5.21.11",
+    "sequelize-cli": "^5.5.1"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1",
+    "jest-junit": "^10.0.0",
+    "nodemon": "^2.0.4",
+    "standard": "^14.3.4",
+    "supertest": "^4.0.2"
+  },
+  "jest-junit": {
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  },
+  "standard": {
+    "ignore": [
+      "tests/**/*.js"
+    ]
+  }
+}
