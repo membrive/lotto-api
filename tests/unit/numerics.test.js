@@ -2,7 +2,7 @@
 
 const numerics = require('../../utils/numerics')
 
-describe('unit tests for numerics util lib', function () {
+describe('unit tests for numerics library', function () {
   it('should return true for a "123" string', async () => {
     expect(numerics.isInteger('123')).toBe(true)
   })

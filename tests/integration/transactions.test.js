@@ -4,21 +4,12 @@ const request = require('supertest')
 const app = require('../../app')
 const Player = require('../../models').Player
 
-beforeAll(() => {
-  return Player.create({
-    fullName: 'TestUser3',
-    birthDate: '1988-11-23',
-    marketId: 1,
-    balance: 100
-  })
-})
-
 describe('/transactions', function () {
   it('should create a new transaction', async () => {
     const response = await request(app)
       .post('/transactions')
       .send({
-        playerId: 1,
+        playerId: 2,
         lottery: 'EuroMillions',
         amount: '8'
       })
@@ -30,7 +21,7 @@ describe('/transactions', function () {
 
   it('should not create a transaction with a lottery that does not exist', async () => {
     const response = await request(app).post('/transactions').send({
-      playerId: 1,
+      playerId: 2,
       lottery: 'TEST',
       amount: '1'
     })
@@ -59,7 +50,7 @@ describe('/transactions', function () {
     const response = await request(app)
       .post('/transactions')
       .send({
-        playerId: 1,
+        playerId: 2,
         lottery: 'EuroMillions',
         amount: '80000'
       })
@@ -70,14 +61,14 @@ describe('/transactions', function () {
   })
 
   it('should get a list with one transaction by marketId', async () => {
-    const response = await request(app).get('/transactions?marketId=1')
+    const response = await request(app).get('/transactions?marketId=3')
     expect(response.status).toEqual(200)
     expect(response.type).toBe('application/json')
     expect(response.body).toHaveLength(1)
   })
 
   it('should get a list with one transaction by playerId', async () => {
-    const response = await request(app).get('/transactions?playerId=1')
+    const response = await request(app).get('/transactions?playerId=2')
     expect(response.status).toEqual(200)
     expect(response.type).toBe('application/json')
     expect(response.body).toHaveLength(1)
@@ -94,8 +85,4 @@ describe('/transactions', function () {
     expect(response.status).toEqual(400)
     expect(response.type).toBe('application/json')
   })
-})
-
-afterAll(() => {
-  Player.destroy({ where: { fullName: 'TestUser3' } })
 })

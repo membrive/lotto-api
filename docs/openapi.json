@@ -106,6 +106,41 @@
             "content": {}
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Delete a player (it will delete his transactions)",
+        "operationId": "deletePlayerById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playerId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player has been deleted",
+            "content": {}
+          },
+          "400": {
+            "description": "There is a problem with playerId parameter",
+            "content": {}
+          },
+          "404": {
+            "description": "Player not found",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
       }
     },
     "/transactions": {
@@ -176,6 +211,7 @@
             "content": {}
           },
           "404": {
+            "description": "Market or player not found",
             "content": {}
           },
           "500": {

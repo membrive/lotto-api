@@ -7,7 +7,7 @@
     "migrate": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate",
     "migrate:undo": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate:undo",
     "migrate:undo:all": "NODE_ENV=docker LOG_LEVEL=fatal sequelize-cli db:migrate:undo:all",
-    "test": "NODE_ENV=docker LOG_LEVEL=fatal jest --ci --reporters=default --reporters=jest-junit --coverage --forceExit",
+    "test": "NODE_ENV=docker LOG_LEVEL=fatal jest --ci --reporters=default --reporters=jest-junit --coverage --forceExit index.spec.js",
     "standard": "standard",
     "standard-fix": "standard --fix",
     "start": "nodemon server.js"

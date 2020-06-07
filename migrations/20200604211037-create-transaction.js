@@ -16,6 +16,7 @@ module.exports = {
           model: 'Players',
           key: 'id'
         },
+        onDelete: 'CASCADE',
         validate: {
           isInt: true
         }
