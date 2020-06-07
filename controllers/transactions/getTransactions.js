@@ -69,7 +69,6 @@ module.exports = async (req, res) => {
 
     return res.status(200).json(transactions)
   } catch (err) {
-    console.log(err)
     logger.error(req.body, messages.generalError + ': ' + err.message)
     return res.status(500).json({ message: messages.generalError })
   }

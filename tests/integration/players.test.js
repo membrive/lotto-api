@@ -34,15 +34,42 @@ describe('/players', function () {
   })
 
   it('should get a validation error with a bad date', async () => {
-    const response = await request(app).post('/players').send({
-      fullName: 'TestUser4',
-      birthDate: 'TEST',
-      country: 'United Kingdom',
-      balance: 3000
-    })
+    const response = await request(app)
+      .post('/players')
+      .send({
+        fullName: 'TestUser4',
+        birthDate: 'TEST',
+        country: 'United Kingdom',
+        balance: 3000
+      })
 
     expect(response.status).toEqual(400)
     expect(response.type).toBe('application/json')
+  })
+
+  it('should get the players list', async () => {
+    const response = await request(app).get('/players')
+
+    expect(response.status).toEqual(200)
+    expect(response.type).toBe('application/json')
+  })
+
+  it('should get the player with id 1', async () => {
+    const response = await request(app).get('/players/1')
+
+    expect(response.status).toEqual(200)
+    expect(response.type).toBe('application/json')
+  })
+
+  it('should not get the player with id adfadfadf', async () => {
+    const response = await request(app).get('/players/adfadfadf')
+
+    expect(response.status).toEqual(400)
+    expect(response.type).toBe('application/json')
+    expect(response.body).toHaveProperty(
+      'message',
+      'playerId query parameter is not an integer'
+    )
   })
 })
 

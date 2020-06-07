@@ -52,6 +52,60 @@
             "content": {}
           }
         }
+      },
+      "get": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Get player list",
+        "operationId": "getPlayers",
+        "responses": {
+          "200": {
+            "description": "Return player list",
+            "content": {}
+          },
+          "404": {
+            "description": "Players not found",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/players/{playerId}": {
+      "get": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Get a player",
+        "operationId": "getPlayerById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playerId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return player object",
+            "content": {}
+          },
+          "404": {
+            "description": "Player not found",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
       }
     },
     "/transactions": {
@@ -119,6 +173,9 @@
           },
           "400": {
             "description": "Bad request, marketId (int) OR playerId (int) are required",
+            "content": {}
+          },
+          "404": {
             "content": {}
           },
           "500": {
