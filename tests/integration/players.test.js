@@ -2,7 +2,6 @@
 
 const request = require('supertest')
 const app = require('../../app')
-const Player = require('../../models').Player
 
 describe('/players', function () {
   it('should create a new user from Germany', async () => {
@@ -62,12 +61,14 @@ describe('/players', function () {
   })
 
   it('should create a new user from Germany', async () => {
-    const response = await request(app).post('/players').send({
-      fullName: 'TestUser4',
-      birthDate: '2020-06-03',
-      country: 'Australia',
-      balance: 100
-    })
+    const response = await request(app)
+      .post('/players')
+      .send({
+        fullName: 'TestUser4',
+        birthDate: '2020-06-03',
+        country: 'Australia',
+        balance: 100
+      })
 
     expect(response.status).toEqual(201)
     expect(response.type).toBe('application/json')
@@ -96,6 +97,34 @@ describe('/players', function () {
     const response = await request(app).delete('/players/adfadfadf')
 
     expect(response.status).toEqual(400)
+    expect(response.type).toBe('application/json')
+  })
+
+  it('should modify user with id 2 with a new balance', async () => {
+    const response = await request(app)
+      .put('/players/2')
+      .send({
+        fullName: 'TestUser4',
+        birthDate: '2020-06-03',
+        country: 'Australia',
+        balance: 300
+      })
+
+    expect(response.status).toEqual(200)
+    expect(response.type).toBe('application/json')
+  })
+
+  it('should not modify user with a different country', async () => {
+    const response = await request(app)
+      .put('/players/2')
+      .send({
+        fullName: 'TestUser4',
+        birthDate: '2020-06-03',
+        country: 'Germany',
+        balance: 300
+      })
+
+    expect(response.status).toEqual(403)
     expect(response.type).toBe('application/json')
   })
 })

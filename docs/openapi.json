@@ -141,6 +141,55 @@
             "content": {}
           }
         }
+      },
+      "put": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Update a player with new information",
+        "operationId": "updatePlayerById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "playerId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Player object that needs to be added to the API",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Player information has been updated",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {}
+          },
+          "403": {
+            "description": "Client tried to change de country/market, not allowed",
+            "content": {}
+          },
+          "404": {
+            "description": "User does not exist",
+            "content": {}
+          },
+          "500": {
+            "description": "Server error",
+            "content": {}
+          }
+        }
       }
     },
     "/transactions": {

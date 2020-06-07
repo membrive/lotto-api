@@ -2,7 +2,6 @@
 
 const request = require('supertest')
 const app = require('../../app')
-const Player = require('../../models').Player
 
 describe('/transactions', function () {
   it('should create a new transaction', async () => {
